@@ -1,0 +1,19 @@
+{
+  "name": "backend-pasajeaerolinea",
+  "version": "1.0.0",
+  "description": "SE REALIZARA UNA COLLECION LLAMADA PASAJE QUE VA DIRIGIDO A\r UNA AEROLINEA DE VUELOS, DONDE SE INTRODUCIRA LOS SIGUIENTES \r DATOS PARA EL DESARROLLO Y PRESENTACION DEL SIGUIENTE EXAMEN.\r     -Pasajero(Nombre)\r     -Clase(Clase de Vuelo)\r     -Asiento(Numero del Asiento)\r     -Origen\r     -Destino\r     -Precio\r     -Fecha_partida\r     -Fecha_llegada",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.4",
+    "nodemon": "^3.1.0"
+  },
+  "devDependencies": {}
+}
