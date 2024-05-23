@@ -1,6 +1,10 @@
 const express = require('express');
 const rutas=express.Router();
 const PasajeModel=require('../models/Pasaje');
+const Vuelo=require('../models/Vuelo');
+const VueloModel=require('../models/Vuelo');
+const Usuario = require('../models/Usuario');
+const UsuarioModel = require('../models/Usuario');
 
 //enpoint 1. traer todos los Pasajes
 rutas.get('/traerPasajes',async (req,res)=>{
@@ -22,7 +26,10 @@ rutas.post('/crearPasaje', async(req, res) =>{
         Destino: req.body.Destino,
         Precio: req.body.Precio,
         Fecha_partida: req.body.Fecha_partida,
-        Fecha_llegada: req.body.Fecha_llegada
+        Fecha_llegada: req.body.Fecha_llegada,
+        NumeroVuelo:req.body.NumeroVuelo,
+        compañia:req.body.Compañia,
+        usuario:req.body.usuario //asignar al usuario
     })
     try{
         const nuevoPasaje = await pasaje.save();
@@ -124,6 +131,50 @@ rutas.get('/masViajes', async (req, res) => {
     } catch (error) {
         res.status(500).json({ mensaje: error.message });
     }
+});
+
+//REPORTES 1
+rutas.get('/pasajePorUsuario/:usuarioId', async(peticion, respuesta)=>{
+    const {usuarioId}=peticion.params;
+    try {
+       const usuario=await UsuarioModel.findById(usuarioId);
+       if(!usuario)
+        return res.status(404).json({mesaje: 'Usuario no Encontrado'});
+        const pasajes=await PasajeModel.find({usuario:usuarioId}).populate('usuario');
+        respuesta.json(pasajes);
+    } catch (error) {
+        res.status(500).json({ mensaje: error.message });
+    }
+})
+
+//REPORTES 2 
+//SUMAR EL GASTO TOTAL DE COMPRA DE PASAJES POR USUARIO
+rutas.get('/gastoPorUsuario', async(req, res)=>{
+    try {
+        const usuarios=await UsuarioModel.find();
+        const reporte=await Promise.all(
+            usuarios.map(async(usuario1)=>{
+                const pasaje=await PasajeModel.find({usuario:usuario1._id});
+                const totalGasto=pasaje.reduce((sum, pasaje)=>sum + pasaje.Precio, 0);
+                return{
+                    usuario:{
+                        _id: usuario1._id,
+                        Pasajero: usuario1.Pasajero
+                    },
+                    totalGasto,
+                    pasaje: pasaje.map(r => ({
+                        _id: r._id,
+                        nombre: r.Pasajero,
+                        precio:r.Precio
+
+                    }))
+                }
+            })
+        )
+        res.json(reporte);
+     } catch (error) {
+         res.status(500).json({ mensaje: error.message });
+     }
 });
 
 
