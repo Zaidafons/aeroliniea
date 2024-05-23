@@ -213,22 +213,33 @@ rutas.get('/cantidadPasajerosPorVuelo/:numeroVuelo', async (req, res) => {
 });
 
 
-
 //REPORTE 4
-rutas.get('/totalPasajeros/:compañia', async (req, res) => {
+//venta de pasjes por vuelo 
+rutas.get('/ingresoPorVuelo', async(req, res)=>{
     try {
-      const compañia = req.params.compañia;
-      onsole.log('COM:', compañia);
-      const vuelos = await VueloModel.find({ Compañia: compañia });
-      let totalPasajeros = 0;
-      for (const vuelo of vuelos) {
-        const pasajes = await PasajeModel.find({ vuelo: vuelo._id });
-        totalPasajeros += pasajes.length;
-      }
-      return res.json({ Compañia: compañia, TotalPasajeros: totalPasajeros });
-    } catch(error) {
-      res.status(500).json({ mensaje: error.message });
-    }
-  });
+        const vuelos=await VueloModel.find();
+        const reporte=await Promise.all(
+            vuelos.map(async(vuelo1)=>{
+                const pasaje=await PasajeModel.find({vuelo:vuelo1._id});
+                const totalIngreso=pasaje.reduce((sum, pasaje)=>sum + pasaje.Precio, 0);
+                return{
+                    vuelo:{
+                        _id: vuelo1._id,
+                        Vuelo: vuelo1.Vuelo
+                    },
+                    totalIngreso,
+                    pasaje: pasaje.map(r => ({
+                        _id: r._id,
+                        nombre: r.Pasajero,
+                        precio:r.Precio
+                    }))
+                }
+            })
+        )
+        res.json(reporte);
+     } catch (error) {
+         res.status(500).json({ mensaje: error.message });
+     }
+});
   
 module.exports = rutas; 
