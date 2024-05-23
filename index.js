@@ -6,8 +6,13 @@ const authRutas=require('./rutas/authRutas');
 const Usuario=require('./models/Usuario')
 require('dotenv').config();
 const app=express();
+const { autenticar } = require('./middlewares/validacion'); // Importa el middleware de autenticación
+
+
+
 //ruta
 const PasajeRutas = require ('./rutas/PasajeRutas');
+const VueloRutas = require ('./rutas/VueloRutas');
 const PORT=process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
 
@@ -22,6 +27,7 @@ mongoose.connect(MONGO_URI).then(
     }
 ).catch(error=>console.log('Error de Conexion', error));
 
+/*
 const autenticar=async(req, res, next)=>{
     try{
         const token=req.headers.authorization?.split(' ')[1];
@@ -36,9 +42,10 @@ const autenticar=async(req, res, next)=>{
         res.status(400).json({error: 'Token Invalido!!'});
     }
 };
-
+*/
 app.use('/auth', authRutas);
 app.use('/pasaje',autenticar, PasajeRutas);
+app.use('/vuelo',autenticar, VueloRutas);
 
 //utilizamos las rutas de recetas
 //app.use('/pasaje', PasajeRutas);

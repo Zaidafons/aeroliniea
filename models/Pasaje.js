@@ -10,8 +10,7 @@ const pasajeSchema=new mongoose.Schema(
         Precio: Number,
         Fecha_partida: Date,
         Fecha_llegada: Date,
-        NumeroVuelo:{type: mongoose.Schema.Types.ObjectId,ref:'Vuelo'},
-        Compañia:{type: mongoose.Schema.Types.ObjectId,ref:'Vuelo'},
+        vuelo:{type: mongoose.Schema.Types.ObjectId,ref:'Vuelo'},
         usuario:{type: mongoose.Schema.Types.ObjectId,ref:'Usuario'}
         
     }

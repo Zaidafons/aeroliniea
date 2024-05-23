@@ -27,8 +27,7 @@ rutas.post('/crearPasaje', async(req, res) =>{
         Precio: req.body.Precio,
         Fecha_partida: req.body.Fecha_partida,
         Fecha_llegada: req.body.Fecha_llegada,
-        NumeroVuelo:req.body.NumeroVuelo,
-        compañia:req.body.Compañia,
+        vuelo:req.body.vuelo,
         usuario:req.body.usuario //asignar al usuario
     })
     try{
@@ -177,5 +176,59 @@ rutas.get('/gastoPorUsuario', async(req, res)=>{
      }
 });
 
+//REPORTE 3
+//Obtener todos los pasajeros de un vuelo específico
+rutas.get('/cantidadPasajerosPorVuelo/:numeroVuelo', async (req, res) => {
+    try {
+        const numeroVuelo = req.params.numeroVuelo; // Obtener el número de vuelo de la solicitud
 
+        // Obtener información del vuelo desde VueloModel
+        const vuelo = await VueloModel.findOne({ NumeroVuelo: numeroVuelo });
+        console.log('Número de vuelo:', numeroVuelo); // Añadir esto para verificar el número de vuelo
+        
+        // Utilizar la agregación para contar los pasajeros por vuelo
+        const resultado = await PasajeModel.aggregate([
+            // Filtrar por el número de vuelo
+            { $group: { _id: numeroVuelo, cantidadPasajeros: { $sum: 1 } } } // Sumar los pasajeros por vuelo
+           
+        ]);
+
+        console.log('Resultado de la agregación:', resultado); // Agregar esto para ver el resultado de la agregación
+
+        if (resultado.length === 0) {
+            return res.status(404).json({ mensaje: 'No se encontraron pasajeros para el vuelo especificado' });
+        }
+
+        const { cantidadPasajeros } = resultado[0]; // Obtener la cantidad de pasajeros del resultado de la agregación
+
+        res.json({ 
+            numeroVuelo,
+            cantidadPasajeros,
+            modelo: vuelo.Modelo,
+            compañia: vuelo.Compañia
+        });
+    } catch (error) {
+        res.status(500).json({ mensaje: error.message });
+    }
+});
+
+
+
+//REPORTE 4
+rutas.get('/totalPasajeros/:compañia', async (req, res) => {
+    try {
+      const compañia = req.params.compañia;
+      onsole.log('COM:', compañia);
+      const vuelos = await VueloModel.find({ Compañia: compañia });
+      let totalPasajeros = 0;
+      for (const vuelo of vuelos) {
+        const pasajes = await PasajeModel.find({ vuelo: vuelo._id });
+        totalPasajeros += pasajes.length;
+      }
+      return res.json({ Compañia: compañia, TotalPasajeros: totalPasajeros });
+    } catch(error) {
+      res.status(500).json({ mensaje: error.message });
+    }
+  });
+  
 module.exports = rutas; 

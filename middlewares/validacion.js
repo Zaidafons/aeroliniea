@@ -1,6 +1,6 @@
 const {response}=require('express');
 const jwt = require('jsonwebtoken');
-const Usuario = require('../model/usuario');
+const Usuario = require('../models/Usuario');
 const {tokenEnTokenBlacklist } = require('./revocacion_token');
 const {validationResult}=require('express-validator');
 
@@ -25,7 +25,7 @@ const autenticar = (req, res, next) => {
             msg: 'token no autenticado',
         });
     }
-
+    console.log(tokenEnTokenBlacklist(token));
     if (tokenEnTokenBlacklist(token)) {
         return res.status(401).json({
             ok: false,

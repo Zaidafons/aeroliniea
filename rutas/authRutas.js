@@ -4,6 +4,7 @@ const Usuario = require('../models/Usuario');
 const {agregarATokenBlacklist } = require('../middlewares/revocacion_token');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
+const JWT_SECRET = 'tu_secreto'
 
 //registro
 rutas.post('/registro', async (req, res) => {

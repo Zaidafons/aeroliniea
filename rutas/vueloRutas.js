@@ -1,16 +1,15 @@
 const express = require('express');
 const rutas=express.Router();
 const VueloModel=require('../models/Vuelo');
-const Usuario = require('../models/Usuario');
-const UsuarioModel = require('../models/Usuario');
+
 
 //enpoint 1. traer todos los Vuelos
-rutas.get('/traerVuelos',async (req,res)=>{
-    try{
-        const vuelo= await VueloModel.find();
-        res.json(vuelo);
-    }catch(error){
-        res.status(500).json({mensaje:error.mensaje});
+rutas.get('/traerVuelos', async (req, res) => {
+    try {
+        const vuelos = await VueloModel.find();
+        res.json(vuelos);
+    } catch (error) {
+        res.status(500).json({ mensaje: error.message });
     }
 });
 
@@ -31,7 +30,7 @@ rutas.post('/crearVuelo', async(req, res) =>{
         res.status(400).json({mensaje: error.mensaje})
     }
    
-})
+});
 
 //enpoint 3. Editar Vuelos
 rutas.put('/editar/:id', async(req, res) =>{
@@ -47,7 +46,7 @@ rutas.put('/editar/:id', async(req, res) =>{
         res.status(400).json({mensaje: error.mensaje})
     }
    
-})
+});
 
 //enpoint 4. Eliminar Vuelo
 rutas.delete('/eliminar/:id', async(req, res)=>{
@@ -60,4 +59,6 @@ rutas.delete('/eliminar/:id', async(req, res)=>{
     }catch(error){
         res.status(500).json({mensaje:error.mensaje});
     }
-})
+});
+
+module.exports = rutas; 

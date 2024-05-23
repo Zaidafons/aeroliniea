@@ -12,3 +12,6 @@ const vueloSchema=new mongoose.Schema(
 );
 const VueloModel = mongoose.model('Vuelo', vueloSchema,'vuelo');
 module.exports=VueloModel;
+
+
+
